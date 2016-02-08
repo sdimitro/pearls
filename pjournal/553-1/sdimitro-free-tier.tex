@@ -30,8 +30,10 @@ and pre-existing performance tools and software. The main goal
 of this attempt was to see how close are my measuments to the
 theoritical peak performance and set a baseline for the expecation
 of people interested on using Amazon's free tier instances.
-Like almost all benchmarkings, there aren't any conclusions to
-be drawn.
+Like almost all benchmarks, there aren't any conclusions to
+be drawn and the my results are there to bias the user's
+expectations of the system.
+
 \end{abstract}
 
 \section{Motivation}
@@ -53,6 +55,54 @@ hardware characteristics described when acquiring such an
 instance.
 
 \section{The Setup}
+All the benchmarks took place on the free tier of the AWS cloud.
+According to Amazon $[1]$, all T2 instances are Burstable
+Performance Instances, which means that they generally provide
+some baseline performance with the ability to occasionally
+burst above that baseline when needed and in accordance to
+some policy. Therefore, these instances are good for workloads
+that don't use the full CPU often and consistenly but they
+occasionally need to burst. For my experiments I will be
+measuring the performance that I get during the actual
+burst as I try to bring the CPU to its limits.
+
+The t2.micro instance that I use boasts 1 virtual
+CPU of a high frequency Intel Xeon processor with Turbo up
+to 3.3 GHz, 1GiB of RAM and 30GB of magnetic storage in
+Amazon's Elastic Block Storage (EBS). It runs Amazon Linux
+and it has a customized version of of the 4.1.13 version
+of the Linux kernel. The gcc version provided with my instance
+is 4.8.3 and it was compiled by Red Hat.
+
+Examining /proc/cpuinfo from within my instance, I see that
+I am running on top of Xen with an Intel Xeon E5-2670 v2 at
+2.5GHz. Looking up the processor's specification on Intel
+$[2]$, I see that this is a 64-bit 10-core processor (20 vCPUs)
+with a base frequency of 2.5GHz and Max Turbo frequency
+of 3.3 GHz, just as advertized from Amazon. So from the
+20 vCPUs I'm given one with 64KB of L1 data and instruction
+cache, 256KB L2 cache and a 25MB Intel Smart Cache, which is
+basically and L3 cache that my instance will share with
+all the other instances running on the same physical
+machine. Unfortunately, the latter bit of information
+emphasizes the fact that the performance of my instance
+depends on the timings of the bursts from the other instances
+that run in the same physical machine as mine.
+
+Running dmidecode to get more information on the memory,
+I get that there is a 1 GB memory device which is expected
+but no more information is specified.
+
+Finally, poking around the system for storage information
+from within the instance doesn't really provide a lot of
+information on the underlying virtual or physical hardware
+used. Therefore, I'll just take Amazon's word $[3]$, that
+there exist some hard disks somewhere behind EBS and my
+instance attaches to it. Although, not very descriptive
+nor detailed, this means that since EBS volumes are
+network-attached disk storage, when testing *disk* I/O
+I should expect the average latency to have the
+generous upper bound of network I/O.
 
 \section{CPU Benchmarking}
 
@@ -168,6 +218,10 @@ images with excessive resolution, as they may take hours to print, without any
 visible difference in the result. 
 
 \section{References}
+
+1) https://aws.amazon.com/ec2/instance-types/
+2) http://ark.intel.com/products/75275/Intel-Xeon-Processor-E5-2670-v2-25M-Cache-2_50-GHz
+3) https://aws.amazon.com/ebs/details/
 
 Bibliographic references must be unambiguous and uniform.  We recommend giving
 the author names references in brackets, e.g. \cite{knuth:84},
