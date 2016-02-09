@@ -31,7 +31,7 @@ of this attempt was to see how close are my measuments to the
 theoritical peak performance and set a baseline for the expecation
 of people interested on using Amazon's free tier instances.
 Like almost all benchmarks, there aren't any conclusions to
-be drawn and the my results are there to bias the user's
+be drawn and my results are just presented to bias the user's
 expectations of the system.
 
 \end{abstract}
@@ -49,14 +49,14 @@ the main idea stays the same.
 like their software runs on bare metal, while in reality it runs
 on virtual, software-defined boundaries}. The reasons behind
 this approach are not in the scope of this paper. The interesting
-part is, how much raw performance can an AWS customre get
+part is, how much raw performance can an AWS customer get
 from these instances and does this performance compare to the
 hardware characteristics described when acquiring such an
 instance.
 
 \section{The Setup}
 All the benchmarks took place on the free tier of the AWS cloud.
-According to Amazon $[1]$, all T2 instances are Burstable
+According to Amazon $\cite{amzn:1}$, all T2 instances are Burstable
 Performance Instances, which means that they generally provide
 some baseline performance with the ability to occasionally
 burst above that baseline when needed and in accordance to
@@ -77,7 +77,7 @@ is 4.8.3 and it was compiled by Red Hat.
 Examining /proc/cpuinfo from within my instance, I see that
 I am running on top of Xen with an Intel Xeon E5-2670 v2 at
 2.5GHz. Looking up the processor's specification on Intel
-$[2]$, I see that this is a 64-bit 10-core processor (20 vCPUs)
+$\cite{intel:1}$, I see that this is a 64-bit 10-core processor (20 vCPUs)
 with a base frequency of 2.5GHz and Max Turbo frequency
 of 3.3 GHz, just as advertized from Amazon. So from the
 20 vCPUs I'm given one with 64KB of L1 data and instruction
@@ -96,13 +96,16 @@ but no more information is specified.
 Finally, poking around the system for storage information
 from within the instance doesn't really provide a lot of
 information on the underlying virtual or physical hardware
-used. Therefore, I'll just take Amazon's word $[3]$, that
+used. Therefore, I'll just take Amazon's word $\cite{amzn:2}$, that
 there exist some hard disks somewhere behind EBS and my
 instance attaches to it. Although, not very descriptive
 nor detailed, this means that since EBS volumes are
 network-attached disk storage, when testing *disk* I/O
-I should expect the average latency to have the
-generous upper bound of network I/O.
+I should expect the average latency and throughput to be
+affected by my instance's network speed. Amazon gives a
+throughput estimate of 40$\sim$90MB/s per volume and I have
+one volume so that should be used as my baseline for
+any comparisons.
 
 \section{CPU Benchmarking}
 
