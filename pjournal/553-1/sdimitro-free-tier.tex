@@ -74,7 +74,7 @@ and it has a customized version of of the 4.1.13 version
 of the Linux kernel. The gcc version provided with my instance
 is 4.8.3 and it was compiled by Red Hat.
 
-Examining /proc/cpuinfo from within my instance, I see that
+Examining \textbf{/proc/cpuinfo} from within my instance, I see that
 I am running on top of Xen with an Intel Xeon E5-2670 v2 at
 2.5GHz. Looking up the processor's specification on Intel
 $\cite{intel:1}$, I see that this is a 64-bit 10-core processor (20 vCPUs)
@@ -89,7 +89,7 @@ emphasizes the fact that the performance of my instance
 depends on the timings of the bursts from the other instances
 that run in the same physical machine as mine.
 
-Running dmidecode to get more information on the memory,
+Running \textbf{dmidecode} to get more information on the memory,
 I get that there is a 1 GB memory device which is expected
 but no more information is specified.
 
@@ -109,7 +109,70 @@ any comparisons.
 
 \section{CPU Benchmarking}
 
+To calculate the theoritical FLOPS/sec, I use the following
+common formula:
+
+\[FLOPS = sockets \times \frac{cores}{socket} \times clock \times \frac{FLOPs}{cycle}\]
+
+
+So given that my instance has one socket, one core per socket, a
+hypothetical clock rate of 3.3GHz (during a burst), and 8 FLOPs
+per cycle - the theoritical peak performance should be 26.4 GFLOPS
+per second.
+
+Running the Linpack Benchmark $\cite{netlib:1}$ I get the
+following results:
+
+\begin{center}
+  \begin{tabular}{||c c c c c||} 
+  \hline
+  Size & LDA & Align. & Average & Maximal \\ [0.5ex] 
+  \hline\hline
+  1000 & 1000 & 4 & 15.5985 & 16.7849 \\ 
+  \hline
+  2000 & 2000 & 4 & 18.2079 & 18.2442 \\
+  \hline
+  5000 & 5008 & 4 & 19.5452 & 19.6511 \\
+  \hline
+  10000 & 10000 & 4 & 20.4602 & 20.5627 \\ [1ex] 
+  \hline
+  \end{tabular}
+\end{center}
+
+Getting the maximum of these results (20.5627 GFLOPS) and
+comparing it to the theoritical peak that I calculated above,
+it seems that the Linpack Benchmark achieves 77\% efficiency.
+At this point it is worth noting that I'm using the Linpack
+Benchmark right out of the box without configuring it.
+
 \section{Memory}
+
+Unfortunately, calculating the theoritical memory bandwidth
+is not as straightforward as calculating the theoritical
+peak GFLOP per second for the CPU. In fact, not having any
+information on the specifications of the memory used for
+my instance, makes this calculation impossible. So my
+methodology this time would be to use the STREAM benchmark *cite here*
+framework and use its results as the baseline for the
+efficiency of my hand-written programs.
+
+The results that I get from the STREAM benchmark are the
+following:
+
+
+
+\begin{tabular}{ |c||c|c|c|c|  }
+  \hline
+  Function & Best Rate MB/s & Avg time & Min time & Max time\\
+  \hline
+  Copy & 7009.2 & 0.029101 & 0.027506 & 0.030290\\
+  Scale & 11984.5 & 0.016250 & 0.016087 & 0.016603\\
+  Add & 12448.5 & 0.023479 & 0.023231 & 0.023691\\
+  Triad & 12519.1 & 0.023248 & 0.023100 & 0.023828\\
+  \hline
+\end{tabular}
+
+
 
 \section{*Disk* Behaviour \& Analysis}
 
